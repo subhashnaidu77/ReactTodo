@@ -1,16 +1,27 @@
-import React, { useState } from "react";
 
-function TodoList() {
+import "./To.css";
+import React, { useState, useEffect } from "react";
+
+function To
+() {
   const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState("");
   const [completedCount, setCompletedCount] = useState(0);
   const [uncompletedCount, setUncompletedCount] = useState(0);
 
-  const updateCounts = () => {
-    const completedTasks = tasks.filter(task => task.completed).length;
-    setCompletedCount(completedTasks);
-    setUncompletedCount(tasks.length - completedTasks);
-  };
+  useEffect(() => {
+    let completed = 0;
+    let uncompleted = 0;
+    tasks.forEach(task => {
+      if (task.completed) {
+        completed++;
+      } else {
+        uncompleted++;
+      }
+    });
+    setCompletedCount(completed);
+    setUncompletedCount(uncompleted);
+  }, [tasks]);
 
   const addTask = () => {
     const trimmedTask = taskInput.trim();
@@ -21,14 +32,12 @@ function TodoList() {
 
     setTasks([...tasks, { text: trimmedTask, completed: false }]);
     setTaskInput("");
-    updateCounts();
   };
 
-  const toggleCompleted = (index) => {
+  const Completed = (index) => {
     const updatedTasks = [...tasks];
     updatedTasks[index].completed = !updatedTasks[index].completed;
     setTasks(updatedTasks);
-    updateCounts();
   };
 
   const editTask = (index, newText) => {
@@ -38,16 +47,15 @@ function TodoList() {
   };
 
   const deleteTask = (index) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
+    if (window.confirm("you want to delete this task?")) {
       const updatedTasks = [...tasks];
       updatedTasks.splice(index, 1);
       setTasks(updatedTasks);
-      updateCounts();
     }
   };
 
   return (
-    <div>
+    <div className="container">
       <input
         type="text"
         value={taskInput}
@@ -62,7 +70,11 @@ function TodoList() {
               <input
                 type="checkbox"
                 checked={task.completed}
-                onChange={() => toggleCompleted(index)}
+                onChange={() => {
+                  Completed(index);
+                  setCompletedCount(prevCount => prevCount + (task.completed ? -1 : 1));
+                  setUncompletedCount(prevCount => prevCount + (task.completed ? 1 : -1));
+                }}
               />
               <span>{task.text}</span>
             </label>
@@ -77,4 +89,4 @@ function TodoList() {
   );
 }
 
-export default TodoList;
+export default To;
